@@ -78,6 +78,8 @@ export default {
           const { data, meta } = res.data
           if (meta.status === 200) {
             console.log('success')
+            // 登录成功的表示(token) 存储在localStorage中
+            localStorage.setItem('token', data.token)
             // 登录成功，需要跳转到后台管理首页
             this.$router.push('/home')
           } else {

@@ -7,9 +7,39 @@ import Login from '@/components/login/Login'
 import Home from '@/components/home/Home'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     { path: '/home', component: Home },
     { path: '/login', component: Login }
   ]
 })
+
+// 全局导航守卫
+// 所有的路由都会先走守卫
+// 添加导航守卫之后，不管是防卫那个路由，都会执行beforeEach回调函数中的代码
+// 因为所有的路由，都会经过该导航守卫，所哟，就可以在守卫函数的回调中判断有没有登录了
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') {
+    // 如果访问的是login页面，直接放行，也就是任何人不管有没有登录
+    // 都可以直接访问的登录页
+    // 直接调用 next() 方法，表示：访问的是哪个页面，就展示这个页面的内容
+    next()
+  } else {
+    // 访问的不是登录页面
+
+    // 判断用户是否登录成功
+    // 1. 当前用户登录成功，直接调用 next() 方法就行
+    // 2. 当用户没有登录，应该调用 next('/login') 跳转到登录页，让用户登录
+
+    // 通过登录成功时候保存的token，来作为有没有登录成功的条件
+    const token = localStorage.getItem('token')
+    if (token) {
+      // 有，登录成功
+      next()
+    } else {
+      // 没有，登录失败
+      next('/login')
+    }
+  }
+})
+export default router
