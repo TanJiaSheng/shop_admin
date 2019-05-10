@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="8">
           <div class="logout">
-                  <span>欢迎使用魔方电商管理系统</span>
+            <span>欢迎使用魔方电商管理系统</span>
             <a href="javascript:;" @click.prevent="logout">退出</a>
           </div>
         </el-col>
@@ -27,6 +27,7 @@
             index 是唯一的，不能重复
          -->
         <el-menu
+          :router="true"
           default-active="1-1"
           class="el-menu-vertical-demo"
           @open="handleOpen"
@@ -43,7 +44,9 @@
               <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="1-1">
+            <!-- 启用路由模式后，index就相当于 远离啊 router-link 中的to属性，用来指定导航的路径(哈希值) -->
+            <!-- 可以使用/home/users 或者 home/users -->
+            <el-menu-item index="home/users">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>用户列表</span>
@@ -59,7 +62,10 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <!-- 子路由出口 -->
+        <router-view/>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -143,8 +149,6 @@ export default {
   .el-main {
     background-color: #E9EEF3;
     color: #333;
-    text-align: center;
-    line-height: 160px;
   }
   .el-container:nth-child(5) .el-aside,
   .el-container:nth-child(6) .el-aside {

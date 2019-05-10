@@ -5,11 +5,21 @@ import Router from 'vue-router'
 import Login from '@/components/login/Login'
 // 导入首页组件
 import Home from '@/components/home/Home'
+// 导入用户列表组件
+import Users from '@/components/users/users'
+
 Vue.use(Router)
 
 const router = new Router({
   routes: [
-    { path: '/home', component: Home },
+    // children 用来配置子路由，将来匹配的组件会展示在 Home 组件的router-view 中
+    {
+      path: '/home',
+      component: Home,
+      children: [
+        { path: 'users', component: Users }
+      ]
+    },
     { path: '/login', component: Login }
   ]
 })
