@@ -16,7 +16,7 @@
      <!-- row 表示一行 -->
     <el-row type="flex" class="loginForm" justify="center" align="middle">
       <!-- col 表示一列 span 表示占用几份（共24份） -->
-      <el-col :xs="12" :sm="10" :md="8" :lg="6" :xl="4" class="login-content">
+      <el-col :xs="12" :sm="10" :md="8" :lg="6" :xl="6" class="login-content">
         <el-form label-position="top" :model="loginForm" :rules="rules" ref="loginForm">
           <el-form-item label="用户名" prop="username">
             <el-input v-model="loginForm.username"></el-input>
