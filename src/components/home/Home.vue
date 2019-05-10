@@ -28,20 +28,20 @@
          -->
         <el-menu
           :router="true"
-          default-active="1-1"
+          default-active="1"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b">
-          <el-submenu index="1">
+          <el-submenu index="home/users">
             <!--
               template: 用来包裹一级菜单，内部指定菜单的图标和菜单名
               如果要给菜单添加小图标，应该使用 temnplate 来包裹整个内容
              -->
             <template slot="title">
-              <i class="el-icon-location"></i>
+              <i class="el-icon-user-solid"></i>
               <span>用户管理</span>
             </template>
             <!-- 启用路由模式后，index就相当于 远离啊 router-link 中的to属性，用来指定导航的路径(哈希值) -->

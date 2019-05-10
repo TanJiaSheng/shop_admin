@@ -36,7 +36,7 @@
 
 <script>
 // 导入 axios
-import axios from 'axios'
+// import axios from 'axios'
 
 export default {
   data() {
@@ -67,8 +67,8 @@ export default {
     login() {
       // 使用axios
       // http://localhost:8888/api/private/v1/login
-      axios
-        .post('http://localhost:8888/api/private/v1/login', this.loginForm)
+      this.$http
+        .post('/login', this.loginForm)
         .then(res => {
           // console.log(res)
           // const data = res.data.data
