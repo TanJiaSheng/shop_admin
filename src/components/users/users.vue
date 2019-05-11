@@ -42,8 +42,8 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" plain size="mini" icon="el-icon-edit"></el-button>
-          <el-button type="danger" plain size="mini" icon="el-icon-delete"></el-button>
+          <el-button type="primary" plain size="mini" icon="el-icon-edit" @click="showUserEditDialog(scope.row)"></el-button>
+          <el-button type="danger" plain size="mini" icon="el-icon-delete" @click="delUserById(scope.row.id)"></el-button>
           <el-button type="success" plain size="mini" icon="el-icon-check">角色分配</el-button>
         </template>
       </el-table-column>
@@ -85,6 +85,24 @@
         <el-button type="primary" @click="addUser">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="userEditDialog" @close="closeUserEditDialog" width="30%">
+      <el-form :model="userEditForm" :rules="userEditRules" ref="userEditForm">
+        <el-form-item label="用户名" prop="username" :label-width="labelWidth">
+          <el-input disabled :value="userEditForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email" :label-width="labelWidth">
+          <el-input v-model="userEditForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile" :label-width="labelWidth">
+          <el-input v-model="userEditForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="userEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="editUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -107,6 +125,7 @@ export default {
       total: 10,
       // 搜索内容
       queryStr: '',
+
       // 控制用户添加对话框的显示隐藏
       userAddDialog: false,
       labelWidth: '120px',
@@ -116,7 +135,6 @@ export default {
         email: '',
         mobile: ''
       },
-
       userAddRules: {
         username: [
           { required: true, message: '用户名为必填项', trigger: 'blur' },
@@ -135,6 +153,33 @@ export default {
           { required: true, message: '密码为必填项', trigger: 'blur' },
           { length: 11, message: '长度为 11 个字符', trigger: 'blur' },
           { pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+        ]
+      },
+
+      // 控制用户编辑框的展示和隐藏
+      userEditDialog: false,
+      userEditForm: {
+        id: -1,
+        username: '',
+        email: '',
+        mobile: ''
+      },
+      userEditRules: {
+        email: [
+          { required: true, message: '邮箱为必填项', trigger: 'blur' },
+          { min: 8, max: 18, message: '长度在 8 到 18 个字符', trigger: 'blur' },
+          { pattern: /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/, message: '输入的邮箱不合法', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '密码为必填项', trigger: 'blur' },
+          {
+            pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
+            message: '请输入正确的手机号码',
+            // 在值改变或者失去焦点的时候，都会触发验证，可以传递两个
+            // trigger: 'change, blur'
+            // 当前值改变就会触发
+            trigger: 'change'
+          }
         ]
       }
     }
@@ -166,6 +211,7 @@ export default {
             // 获取数据成功
             this.userList = data.users
             this.total = data.total
+            this.curPage = data.pagenum
           }
         })
     },
@@ -232,6 +278,80 @@ export default {
               this.getUesrList()
             }
           })
+        } else {
+          return false
+        }
+      })
+    },
+
+    /**
+     * 删除用户
+     * @param {id} id 需要删除对应的用户
+    */
+    delUserById(id) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.delete(`/users/${id}`).then(res => {
+          const { meta } = res.data
+          if (meta.status === 200) {
+            this.$message({
+              type: 'success',
+              message: meta.msg
+            })
+
+            // this.getUesrList()
+
+            const index = this.userList.findIndex(item => item.id === id)
+            this.userList.splice(index, 1)
+            const totalPage = Math.ceil(this.userList.length / this.pageSize)
+            if (this.curPage > totalPage) {
+              this.getUesrList(--this.curPage)
+            }
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+
+    // 展示编辑对话框
+    showUserEditDialog(curUser) {
+      for (let key in this.userEditForm) {
+        this.userEditForm[key] = curUser[key]
+      }
+      this.userEditDialog = true
+    },
+
+    closeUserEditDialog() {
+      this.$refs.userEditForm.resetFields()
+    },
+
+    // 编辑用户
+    editUser() {
+      this.$refs.userEditForm.validate(vaild => {
+        if (vaild) {
+          const { id, email, mobile } = this.userEditForm
+          this.$http.put(`users/${id}`, {
+            email,
+            mobile
+          })
+            .then(res => {
+              const { data, meta } = res.data
+              if (meta.status === 200) {
+                // 更新该用户的数据
+                const editUser = this.userList.find(item => item.id === id)
+                editUser.email = data.email
+                editUser.mobile = data.mobile
+                // 关闭对话框
+                this.userEditDialog = false
+              }
+            })
         } else {
           return false
         }
