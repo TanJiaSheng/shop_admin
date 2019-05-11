@@ -9,6 +9,8 @@ import Home from '@/components/home/Home'
 import Users from '@/components/users/users'
 // 导入权限列表组件
 import Rights from '@/components/rights/Rights'
+// 导入角色管理列表组件
+import Roles from '@/components/roles/Roles'
 
 Vue.use(Router)
 
@@ -20,7 +22,8 @@ const router = new Router({
       component: Home,
       children: [
         { path: 'users', component: Users },
-        { path: 'rights', component: Rights }
+        { path: 'rights', component: Rights },
+        { path: 'roles', component: Roles }
       ]
     },
     { path: '/login', component: Login }

@@ -43,7 +43,7 @@ export default {
      */
     async getRightsList() {
       const res = await this.$http.get('/rights/list')
-      console.log(res)
+      // console.log(res)
       const { data, meta } = res.data
       if (meta.status === 200) {
         this.rightsList = data

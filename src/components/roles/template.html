@@ -1,0 +1,40 @@
+<div>
+  <el-breadcrumb separator-class="el-icon-arrow-right" class="user-breadcrumb">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+    <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+  </el-breadcrumb>
+
+  <!-- 表格 -->
+  <el-table :data="rolesList" stripe style="width: 100%">
+    <el-table-column type="index">
+    </el-table-column>
+    <el-table-column prop="roleName" label="角色名称" width="180">
+    </el-table-column>
+    <el-table-column prop="roleDesc" label="描述" width="180">
+    </el-table-column>
+    <el-table-column label="操作">
+      <template slot-scope="scope">
+        <el-button type="primary" icon="el-icon-edit" plain size="mini" @click="showRoleEditDialog(scope.row)"></el-button>
+        <el-button type="danger" icon="el-icon-delete" plain size="mini" @click="delRole(scope.row.id)"></el-button>
+        <el-button type="success" icon="el-icon-check" plain size="mini" @click="showAssignRightsDialog(scope.row)">分配权限</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+
+  <!-- 编辑对话框 -->
+  <el-dialog title="编辑角色" :visible.sync="roleEditDialog" width="30%">
+    <el-form :model="roleEditFrom">
+      <el-form-item label="角色名称" :label-width="formLabelWidth">
+        <el-input v-model="roleEditFrom.roleName"></el-input>
+      </el-form-item>
+      <el-form-item label="角色描述" :label-width="formLabelWidth">
+        <el-input v-model="roleEditFrom.roleDesc"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="roleEditDialog = false">取 消</el-button>
+      <el-button type="primary" @click="editRole">确 定</el-button>
+    </div>
+  </el-dialog>
+</div>
