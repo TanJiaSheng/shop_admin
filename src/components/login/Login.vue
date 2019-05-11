@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     // 登录功能的实现
-    login() {
+    /* login() {
       // 使用axios
       // http://localhost:8888/api/private/v1/login
       this.$http
@@ -83,7 +83,6 @@ export default {
             // 登录成功，需要跳转到后台管理首页
             this.$router.push('/home')
           } else {
-            // this.$message.error(meta.msg)
             this.$message({
               type: 'error',
               message: meta.msg,
@@ -91,7 +90,27 @@ export default {
             })
           }
         })
+    }, */
+
+    async login() {
+      // 使用axios
+      // http://localhost:8888/api/private/v1/login
+      const res = await this.$http.post('/login', this.loginForm)
+      const { data, meta } = res.data
+      if (meta.status === 200) {
+        // 登录成功的表示(token) 存储在localStorage中
+        localStorage.setItem('token', data.token)
+        // 登录成功，需要跳转到后台管理首页
+        this.$router.push('/home')
+      } else {
+        this.$message({
+          type: 'error',
+          message: meta.msg,
+          duration: 1000
+        })
+      }
     },
+
     submitForm() {
       // ref 用在组件中，表示当前组件
       this.$refs.loginForm.validate((valid) => {
