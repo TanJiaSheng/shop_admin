@@ -44,7 +44,7 @@
         <template slot-scope="scope">
           <el-button type="primary" plain size="mini" icon="el-icon-edit" @click="showUserEditDialog(scope.row)"></el-button>
           <el-button type="danger" plain size="mini" icon="el-icon-delete" @click="delUserById(scope.row.id)"></el-button>
-          <el-button type="success" plain size="mini" icon="el-icon-check">角色分配</el-button>
+          <el-button type="success" plain size="mini" icon="el-icon-check" @click="dialogFormShow">角色分配</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -85,6 +85,7 @@
         <el-button type="primary" @click="addUser">确 定</el-button>
       </div>
     </el-dialog>
+
     <!-- 编辑用户对话框 -->
     <el-dialog title="编辑用户" :visible.sync="userEditDialog" @close="closeUserEditDialog" width="30%">
       <el-form :model="userEditForm" :rules="userEditRules" ref="userEditForm">
@@ -101,6 +102,25 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="userEditDialog = false">取 消</el-button>
         <el-button type="primary" @click="editUser">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 角色分配对话框 -->
+    <el-dialog title="角色分配" :visible.sync="dialogFormVisible" width="30%">
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input disabled v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="选择角色" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -181,7 +201,14 @@ export default {
             trigger: 'change'
           }
         ]
-      }
+      },
+
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        region: ''
+      },
+      formLabelWidth: '120px'
     }
   },
 
@@ -373,6 +400,11 @@ export default {
           return false
         }
       })
+    },
+
+    // 角色分配
+    dialogFormShow() {
+      this.dialogFormVisible = true
     }
   }
 }

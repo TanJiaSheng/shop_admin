@@ -14,3 +14,5 @@ yarn-error.log*
 *.sln
 
 package-lock.json
+
+README.1.md

@@ -41,7 +41,7 @@
               如果要给菜单添加小图标，应该使用 temnplate 来包裹整个内容
              -->
             <template slot="title">
-              <i class="el-icon-user-solid"></i>
+              <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
             <!-- 启用路由模式后，index就相当于 远离啊 router-link 中的to属性，用来指定导航的路径(哈希值) -->
@@ -55,7 +55,7 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-lock"></i>
+              <i class="el-icon-location"></i>
               <span>权限管理</span>
             </template>
             <el-menu-item index="/home/roles">

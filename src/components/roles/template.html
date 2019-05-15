@@ -7,6 +7,48 @@
 
   <!-- 表格 -->
   <el-table :data="rolesList" stripe style="width: 100%">
+    <el-table-column type="expand">
+      <template slot-scope="scope">
+        <el-row v-if="scope.row.children.length === 0">
+          <el-col>
+            暂无权限，请分配
+          </el-col>
+        </el-row>
+        <!-- 遍历一级菜单 -->
+        <el-row v-else class="level1-row" v-for="level1 in scope.row.children" :key="level1.id">
+          <!-- 展示一级菜单的名字 -->
+          <el-col :span="4">
+            <!-- closable带有关闭x号 type表示颜色类型 -->
+            <el-tag closable @close="delRoleRightById(scope.row.id, level1.id)">
+                {{ level1.authName }}
+            </el-tag>
+            <i class="el-icon-arrow-right"></i>
+          </el-col>
+          <el-col :span="20">
+            <!-- 遍历二级菜单的名字 -->
+            <el-row class="level2-row" v-for="level2 in level1.children" :key="level2.id">
+                <el-col :span="4">
+                    <el-tag closable type="success" @close="delRoleRightById(scope.row.id, level2.id)">
+                        {{ level2.authName }}
+                    </el-tag>
+                    <i class="el-icon-arrow-right"></i>
+                </el-col>
+                <!-- 遍历三级菜单 -->
+                <el-col :span="20">
+                  <el-tag
+                    class="level3-tag"
+                    v-for="level3 in level2.children"
+                    :key="level3.id"
+                    closable type="warning"
+                    @close="delRoleRightById(scope.row.id, level3.id)">
+                      {{ level3.authName }}
+                  </el-tag>
+                </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </template>
+    </el-table-column>
     <el-table-column type="index">
     </el-table-column>
     <el-table-column prop="roleName" label="角色名称" width="180">
@@ -17,7 +59,7 @@
       <template slot-scope="scope">
         <el-button type="primary" icon="el-icon-edit" plain size="mini" @click="showRoleEditDialog(scope.row)"></el-button>
         <el-button type="danger" icon="el-icon-delete" plain size="mini" @click="delRole(scope.row.id)"></el-button>
-        <el-button type="success" icon="el-icon-check" plain size="mini" @click="showAssignRightsDialog(scope.row)">分配权限</el-button>
+        <el-button type="success" icon="el-icon-check" plain size="mini" @click="showRightsDialog(scope.row.children, scope.row.id)">分配权限</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -35,6 +77,30 @@
     <div slot="footer" class="dialog-footer">
       <el-button @click="roleEditDialog = false">取 消</el-button>
       <el-button type="primary" @click="editRole">确 定</el-button>
+    </div>
+  </el-dialog>
+
+  <!-- 分配权限对话框 -->
+  <el-dialog title="分配权限" :visible.sync="rightsDialog">
+    <!--
+      树形控件
+      data 数据
+      show-checkbox 表示显示checkbox
+      node-key 每个节点的唯一表示，使用 id 即可
+      default-expanded-all 默认展开所有节点
+      props 是一个对象，用来设置子节点以及展示文字的属性名称
+    -->
+    <el-tree
+      ref="allRights"
+      :data="allRights"
+      show-checkbox
+      node-key="id"
+      :default-expand-all="true"
+      :props="defaultProps">
+    </el-tree>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="rightsDialog = false">取 消</el-button>
+      <el-button type="primary" @click="assignRights">确 定</el-button>
     </div>
   </el-dialog>
 </div>
