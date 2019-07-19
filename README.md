@@ -1,7 +1,5 @@
 # Vue 项目
 
-- [项目地址 https://gitee.com/zqran/shop_admin_25](https://gitee.com/zqran/shop_admin_25)
-
 ## 项目功能
 
 - 1 登录
